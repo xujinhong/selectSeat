@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>候选人：许晋红 阿里选座Demo</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+        }
+
+        .dHeader {
+            height: 40px;
+            line-height: 40px;
+            width: 90%;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .user {
+            width: 100px;
+            height: 22px;
+            line-height: 22px;
+        }
+
+        .dTip {
+            width: 300px;
+            height: 180px;
+            overflow: auto;
+            position: absolute;
+            left: 273px;
+            top: 30px;
+            color: #ff19ce;
+        }
+
+        .dTip table {
+            width: 100%;
+            text-align: center;
+            background-color: #ccc;
+            font-weight: bold;
+        }
+
+        .dTip table tr {
+            height: 22px;
+            line-height: 22px;
+        }
+
+        .dTip table tr td {
+            background-color: #fff;
+        }
+
+        .dBody {
+            width: 90%;
+            margin: 0 auto;
+            overflow: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .dSeat {
+            width: 2050px;
+        }
+
+        .tSeat {
+            width: 100%;
+            background-color: #f5f5f5;
+        }
+
+        .tSeat tr {
+        }
+
+        .tSeat tr td {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .tSeat tr th {
+            color: red;
+        }
+
+        .tSeat tr td div {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto;
+        }
+
+        .dSeatKz {
+            background-image: url("Images/kz.png");
+        }
+
+        .dSeatYx {
+            background-image: url("Images/yx.png");
+        }
+
+        .dSeatZx {
+            background-image: url("Images/zx.png");
+        }
+
+        .dFooter {
+            height: 30px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+    </style>
+    <script type="text/javascript" src="Scripts/jquery-1.11.3.js"></script>
+    <script type="text/javascript">
+        //座位选取数据
+        var Data = new Array();
+        $(function () {
+            //兼容dBody高度全屏
+            var wHeight = document.documentElement.clientHeight - 72;
+            $(".dBody").css("height", wHeight + "px");
+
+            //绑定座位
+            var rows = 300;
+            SetSeats(wHeight, rows, 0);
+            var sctop = 0;
+
+            //座位滚动条变化
+            $('.dBody').on('scroll', function () {
+                sctop = $(this).scrollTop();
+                SetSeats(wHeight, rows, sctop);
+            });
+
+            //切换用户
+            $(".user").change(function () {
+                SetSeats(wHeight, rows, sctop);
+            });
+
+            //查看按钮
+            $(".btnSel").click(function () {
+                if ($(this).attr("value") == "查看") {
+                    $(this).attr("value", "隐藏");
+                    $(".dTip").show(1000);
+
+                    //显示数据
+                    var strTip = "<tr>\n" +
+                        "                        <td></td>\n" +
+                        "                        <td>用户</td>\n" +
+                        "                        <td>座位号</td>\n" +
+                        "                    </tr>";
+                    for (var i = 0; i < Data.length; i++) {
+                        strTip += "<tr><td>" + (i + 1) + "</td><td>" + Data[i][0] + "</td><td>" + Data[i][1] + "</td></tr>";
+                    }
+                    $(".tTip").html(strTip);
+                }
+                else {
+                    $(this).attr("value", "查看");
+                    $(".dTip").hide(1000);
+                }
+            });
+        });
+
+        //绑定座位
+        function SetSeats(wHeight, rows, sctop) {
+            var user = $(".user").val();
+
+            $(".dMTop").css("height", (sctop) + "px");
+            $(".dSeat").css("height", (rows * 40 - sctop) + "px");
+            var rowX = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z AA AB AC AD".split(" ");
+            var strPin = '<tr>\n' +
+                '                        <th></th>\n' +
+                '                        <th>A</th>\n' +
+                '                        <th>B</th>\n' +
+                '                        <th>C</th>\n' +
+                '                        <th>D</th>\n' +
+                '                        <th>E</th>\n' +
+                '                        <th>F</th>\n' +
+                '                        <th>G</th>\n' +
+                '                        <th>H</th>\n' +
+                '                        <th>I</th>\n' +
+                '                        <th>J</th>\n' +
+                '                        <th>K</th>\n' +
+                '                        <th>L</th>\n' +
+                '                        <th>M</th>\n' +
+                '                        <th>N</th>\n' +
+                '                        <th>O</th>\n' +
+                '                        <th>P</th>\n' +
+                '                        <th>Q</th>\n' +
+                '                        <th>R</th>\n' +
+                '                        <th>S</th>\n' +
+                '                        <th>T</th>\n' +
+                '                        <th>U</th>\n' +
+                '                        <th>V</th>\n' +
+                '                        <th>W</th>\n' +
+                '                        <th>X</th>\n' +
+                '                        <th>Y</th>\n' +
+                '                        <th>Z</th>\n' +
+                '                        <th>AA</th>\n' +
+                '                        <th>AB</th>\n' +
+                '                        <th>AC</th>\n' +
+                '                        <th>AD</th>\n' +
+                '                    </tr>';
+
+            var showRow = parseInt(wHeight / 40) - 1;
+            var firstRow = parseInt(sctop / 40) + 1;
+            firstRow = (firstRow < rows - showRow ? firstRow : rows - showRow + 1);
+            for (var i = firstRow; i < firstRow + showRow; i++) {
+                strPin += '<tr><th>' + i + '</th>';
+                for (var j = 0; j < rowX.length; j++) {
+                    var vlSeat = (rowX[j] + '_' + i);
+                    //验证已选
+                    var strClass = "dSeatKz"; //未选 已选 自选
+                    for (var k = 0; k < Data.length; k++) {
+                        if (Data[k][1] == vlSeat) {
+                            if (Data[k][0] == user) {
+                                strClass = "dSeatZx";
+                            }
+                            else {
+                                strClass = "dSeatYx";
+                            }
+                        }
+                    }
+
+                    strPin += '<td><div class="' + strClass + '" seat="' + vlSeat + '" title="第' + i + '排' + rowX[j] + '座" onclick="GetCheckSeat(this)"></div></td>';
+                }
+                strPin += '</tr>';
+            }
+            $(".tSeat").html(strPin);
+        }
+
+        //单击选座
+        function GetCheckSeat(obj) {
+            var user = $(".user").val();
+
+            var vlSeat = $(obj).attr('seat');
+            var bgC = $(obj).css("background-image");
+            //空座位
+            if (bgC.indexOf('kz.png') > -1) {
+                //添加
+                Data.push([user, vlSeat]);
+                $(obj).css("background-image", "url(\'Images/zx.png\')");
+            }
+            //自选座位
+            if (bgC.indexOf('zx.png') > -1) {
+                //删除
+                for (var i = 0; i < Data.length; i++) {
+                    if (Data[i][0] == user && Data[i][1] == vlSeat) {
+                        Data.splice(i, 1);
+                    }
+                }
+                $(obj).css("background-image", "url(\'Images/kz.png\')");
+            }
+            //已选座位
+            if ($(obj).attr("class") == "dSeatYx") {
+                alert("该座位已被其他用户选中！");
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="dHeader">
+    <span>用户：</span>
+    <select class="user">
+        <option value="xujh">许晋红</option>
+        <option value="ali">阿里</option>
+    </select>
+
+    <span style=" color: #ff19ce;">*选择切换用户</span>
+    <input type="button" class="btnSel" title="查看选择情况" value="查看" style=" width: 50px;"/>
+    <div class="dTip" style=" display: none;">
+        <table class="tTip" cellpadding="0" cellspacing="1"></table>
+    </div>
+</div>
+<div class="dBody">
+    <div class="dSeat">
+        <div class="dMTop"></div>
+        <table class="tSeat"></table>
+    </div>
+</div>
+<div class="dFooter">
+    <p>候选人：许晋红 阿里选座Demo</p>
+</div>
+</body>
+</html>
